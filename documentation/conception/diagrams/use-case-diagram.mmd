@@ -1,0 +1,39 @@
+flowchart LR
+    %% Acteurs
+    ETU(["👤 Étudiant"])
+    GEST(["👤 Gestionnaire\n(non implémenté — Partie 2+)"])
+
+    %% Frontière système
+    subgraph SYS ["🖥️ AtelierCampus — Partie 1"]
+        UC1["Consulter la page d'accueil"]
+        UC2["Consulter le catalogue des ateliers"]
+        UC3["Voir le détail d'un atelier"]
+        UC4["Soumettre une demande d'inscription"]
+        UC5["Consulter le récapitulatif de simulation"]
+        UC6["Préparer et publier les ateliers\n⚠️ réservé Partie 2+"]
+        UC7["Suivre et gérer les inscriptions\n⚠️ réservé Partie 2+"]
+    end
+
+    %% Relations Étudiant
+    ETU --> UC1
+    ETU --> UC2
+    ETU --> UC3
+    ETU --> UC4
+    ETU --> UC5
+
+    %% Relations Gestionnaire (futures)
+    GEST -.-> UC6
+    GEST -.-> UC7
+
+    %% Enchaînements include
+    UC2 -->|"&lt;&lt;include&gt;&gt;"| UC1
+    UC3 -->|"&lt;&lt;include&gt;&gt;"| UC2
+    UC4 -->|"&lt;&lt;include&gt;&gt;"| UC3
+    UC5 -->|"&lt;&lt;include&gt;&gt;"| UC4
+
+    %% Style
+    style GEST fill:#e2e8f0,stroke:#94a3b8,color:#64748b,stroke-dasharray:5 5
+    style UC6 fill:#f1f5f9,stroke:#94a3b8,color:#64748b,stroke-dasharray:5 5
+    style UC7 fill:#f1f5f9,stroke:#94a3b8,color:#64748b,stroke-dasharray:5 5
+    style SYS fill:#f8fafc,stroke:#1677C8
+

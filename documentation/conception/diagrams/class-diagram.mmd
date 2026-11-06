@@ -1,0 +1,99 @@
+classDiagram
+    direction TB
+
+    class Etudiant {
+        +Long id
+        +String nom
+        +String email
+        +getId() Long
+        +getNom() String
+        +getEmail() String
+    }
+
+    class Atelier {
+        +Long id
+        +String titre
+        +String descriptionCourte
+        +String description
+        +LocalDateTime dateHeure
+        +int capacite
+        +String animateur
+        +String salle
+        +String niveau
+        +isPasse() boolean
+        +getDateHeureFormattee() String
+        +getDateHeureCourte() String
+    }
+
+    class Inscription {
+        +Long id
+        +LocalDateTime dateInscription
+        +Statut statut
+        +isConfirmee() boolean
+        +isAnnulee() boolean
+        +getAtelier() Atelier
+        +getEtudiant() Etudiant
+    }
+
+    class Statut {
+        <<enumeration>>
+        CONFIRMEE
+        ANNULEE
+    }
+
+    class DataStore {
+        <<Singleton>>
+        -static DataStore INSTANCE
+        -ConcurrentHashMap~Long,Etudiant~ etudiants
+        -ConcurrentHashMap~Long,Atelier~ ateliers
+        -List~Inscription~ inscriptions
+        +static getInstance() DataStore
+        +getAteliers() Collection~Atelier~
+        +getAtelierById(Long) Atelier
+        +getAtelierById(String) Atelier
+        +getInscriptions() List~Inscription~
+        +getInscriptionsByAtelier(Long) List~Inscription~
+        +getNombreInscriptionsConfirmees(Long) int
+        +getPlacesRestantes(Long) int
+        +isComplet(Long) boolean
+        +getStatutDisponibilite(Long) String
+        +getCodeStatut(Long) String
+        +getCodeStatut(String) String
+    }
+
+    class AppContextListener {
+        <<WebListener>>
+        +contextInitialized(ServletContextEvent)
+        +contextDestroyed(ServletContextEvent)
+    }
+
+    class ValidationUtil {
+        <<utility>>
+        -Pattern EMAIL_PATTERN
+        +validateDemandeInscription(String, String, String, DataStore) ValidationResult
+        +escapeHtml(String) String
+    }
+
+    class ValidationResult {
+        -List~String~ erreurs
+        +addError(String)
+        +isValid() boolean
+        +hasErrors() boolean
+        +getErreurs() List~String~
+    }
+
+    %% Relations entre entités
+    Inscription "n" --> "1" Etudiant : concerne
+    Inscription "n" --> "1" Atelier : porte sur
+    Inscription --> Statut : utilise
+
+    %% DataStore agrège les entités
+    DataStore "1" o-- "*" Etudiant : stocke
+    DataStore "1" o-- "*" Atelier : stocke
+    DataStore "1" o-- "*" Inscription : stocke
+
+    %% Dépendances
+    AppContextListener --> DataStore : enregistre dans ServletContext
+    ValidationUtil --> DataStore : consulte
+    ValidationUtil --> ValidationResult : produit
+

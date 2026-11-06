@@ -1,0 +1,91 @@
+flowchart TD
+    %% Couche Client
+    subgraph CLIENT["Navigateur Web (Client)"]
+        NAV["Requêtes HTTP GET / POST"]
+    end
+
+    %% Couche Serveur d'application
+    subgraph TOMCAT["Apache Tomcat 10.1 — Conteneur de Servlets"]
+
+        subgraph LISTENERS["Initialisation"]
+            ACL["AppContextListener\n@WebListener\n→ enregistre DataStore\n  dans le ServletContext"]
+        end
+
+        subgraph SERVLET["Contrôleur"]
+            TS["TraitementServlet\n@WebServlet /traitement\ndoPost → validation + dispatch\ndoGet → redirect catalogue"]
+        end
+
+        subgraph JSPS["Pages JSP (Vues)"]
+            IDX["index.jsp\nPage d'accueil"]
+            CAT["catalogue.jsp\nListe des ateliers"]
+            DET["detail.jsp\nDétail atelier + inscriptions"]
+            INS["inscription.jsp\nFormulaire d'inscription"]
+            REC["recapitulatif.jsp\nConfirmation simulation"]
+            ERR["error.jsp\nGestion erreurs 404 / 500"]
+        end
+
+        subgraph INCLUDES["Fragments partagés"]
+            HDR["includes/header.jsp\nNavigation + charte graphique"]
+            FTR["includes/footer.jsp\nPied de page universitaire"]
+        end
+
+        subgraph UTIL["Utilitaires"]
+            VU["ValidationUtil\nvalidateDemandeInscription()\nescapeHtml()"]
+            VR["ValidationResult\nListe des erreurs"]
+        end
+
+        subgraph DATA["Couche Données (mémoire)"]
+            DS["DataStore\nSingleton — ConcurrentHashMap\n5 étudiants · 4 ateliers · 6 inscriptions"]
+            MDL["Modèle de domaine\nEtudiant · Atelier\nInscription · Statut"]
+        end
+    end
+
+    %% Flux HTTP
+    NAV -->|"GET /index.jsp"| IDX
+    NAV -->|"GET /catalogue.jsp"| CAT
+    NAV -->|"GET /detail.jsp?id=N"| DET
+    NAV -->|"GET /inscription.jsp?id=N"| INS
+    NAV -->|"POST /traitement"| TS
+
+    %% Dispatch Servlet
+    TS -->|"erreurs → forward"| INS
+    TS -->|"succès → forward"| REC
+    TS --> VU
+    VU --> VR
+
+    %% Accès aux données
+    TS --> DS
+    CAT -->|"EL : ${dataStore.ateliers}"| DS
+    DET -->|"EL : ${dataStore.getAtelierById}"| DS
+    DET -->|"EL : ${dataStore.getCodeStatut}"| DS
+    INS -->|"EL : ${dataStore.getAtelierById}"| DS
+
+    %% Fragments inclus
+    IDX --> HDR
+    IDX --> FTR
+    CAT --> HDR
+    CAT --> FTR
+    DET --> HDR
+    DET --> FTR
+    INS --> HDR
+    INS --> FTR
+    REC --> HDR
+    REC --> FTR
+
+    %% Données
+    DS --> MDL
+
+    %% Initialisation au démarrage
+    ACL -->|"contextInitialized"| DS
+
+    %% web.xml
+    WEBXML["web.xml\nServlet 6.0\nErreurs 404/500 → error.jsp\nSession : HttpOnly + SameSite=Strict\nEncodage UTF-8 JSP"]
+    WEBXML -.->|"configure"| TOMCAT
+
+    %% Style
+    style CLIENT fill:#e0f2fe,stroke:#0284c7
+    style TOMCAT fill:#f8fafc,stroke:#1677C8
+    style DATA fill:#f0fdf4,stroke:#16845b
+    style UTIL fill:#fefce8,stroke:#ca8a04
+    style SERVLET fill:#fff7ed,stroke:#ea580c
+

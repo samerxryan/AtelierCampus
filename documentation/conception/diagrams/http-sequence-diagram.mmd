@@ -1,0 +1,73 @@
+sequenceDiagram
+    actor ETU as Étudiant
+    participant NAV as Navigateur
+    participant TC as Tomcat / JSP Engine
+    participant DS as DataStore
+    participant VU as ValidationUtil
+    participant SRV as TraitementServlet
+
+    Note over ETU,SRV: ── Parcours nominal : consultation et demande d'inscription ──
+
+    ETU->>NAV: Accède à AtelierCampus
+    NAV->>TC: GET /AtelierCampus/
+    TC->>DS: getAteliers()
+    DS-->>TC: Collection&lt;Atelier&gt; (4 ateliers)
+    TC-->>NAV: HTTP 200 — index.jsp rendu
+    NAV-->>ETU: Page d'accueil
+
+    ETU->>NAV: Clique sur "Catalogue des ateliers"
+    NAV->>TC: GET /catalogue.jsp
+    TC->>DS: getAteliers() + getCodeStatut(id)
+    DS-->>TC: Ateliers avec statuts (disponible/complet/passe)
+    TC-->>NAV: HTTP 200 — catalogue.jsp rendu
+    NAV-->>ETU: Grille des 4 ateliers avec statuts
+
+    ETU->>NAV: Clique sur "Voir les détails" (atelier #1)
+    NAV->>TC: GET /detail.jsp?id=1
+    TC->>DS: getAtelierById("1")
+    DS-->>TC: Atelier #1 trouvé
+    TC->>DS: getInscriptionsByAtelier(1L) + getPlacesRestantes(1L)
+    DS-->>TC: Inscriptions + places restantes
+    TC-->>NAV: HTTP 200 — detail.jsp rendu
+    NAV-->>ETU: Détail atelier + tableau des inscriptions
+
+    ETU->>NAV: Clique sur "S'inscrire"
+    NAV->>TC: GET /inscription.jsp?id=1
+    TC->>DS: getAtelierById("1")
+    DS-->>TC: Atelier #1
+    TC-->>NAV: HTTP 200 — inscription.jsp (atelierId=1 en champ caché)
+    NAV-->>ETU: Formulaire d'inscription pré-rempli
+
+    Note over ETU,SRV: ── Sous-parcours A : soumission avec données invalides ──
+
+    ETU->>NAV: Soumet le formulaire (email malformé)
+    NAV->>SRV: POST /traitement (nom="Ali", email="ali@", atelierId="1")
+    SRV->>VU: validateDemandeInscription("Ali", "ali@", "1", dataStore)
+    VU->>DS: getAtelierById(1L)
+    DS-->>VU: Atelier #1
+    VU-->>SRV: ValidationResult — hasErrors=true ["Format email invalide"]
+    SRV->>TC: forward → inscription.jsp (attributs : erreurs + valeurs saisies)
+    TC-->>NAV: HTTP 200 — inscription.jsp avec messages d'erreur
+    NAV-->>ETU: Formulaire ré-affiché, valeurs conservées, erreurs visibles
+
+    Note over ETU,SRV: ── Sous-parcours B : soumission valide ──
+
+    ETU->>NAV: Soumet le formulaire (données correctes)
+    NAV->>SRV: POST /traitement (nom="Ali Ben Salah", email="ali@univ.tn", atelierId="1")
+    SRV->>VU: validateDemandeInscription("Ali Ben Salah", "ali@univ.tn", "1", dataStore)
+    VU->>DS: getAtelierById(1L)
+    DS-->>VU: Atelier #1
+    VU-->>SRV: ValidationResult — isValid=true
+    SRV->>DS: getAtelierById(1L)
+    DS-->>SRV: Atelier #1 (pour le récapitulatif)
+    SRV->>TC: forward → recapitulatif.jsp (nom, email, atelier en requestScope)
+    TC-->>NAV: HTTP 200 — recapitulatif.jsp
+    NAV-->>ETU: "Demande simulée, non enregistrée." + résumé
+
+    Note over ETU,SRV: ── Accès direct illicite au récapitulatif ──
+
+    ETU->>NAV: Accès direct à /recapitulatif.jsp
+    NAV->>TC: GET /recapitulatif.jsp
+    TC-->>NAV: HTTP 302 — redirect → /catalogue.jsp
+    NAV-->>ETU: Redirection vers le catalogue
+
