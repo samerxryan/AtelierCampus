@@ -1,0 +1,2 @@
+package com.ateliercampus.service;import com.ateliercampus.dao.EtudiantDao;import com.ateliercampus.model.Etudiant;import org.mindrot.jbcrypt.BCrypt;
+public class AuthentificationService {private final EtudiantDao dao=new EtudiantDao();public Etudiant connecter(String email,String password)throws Exception{if(email==null||password==null)return null;Etudiant e=dao.findByEmail(email.trim());String hash=dao.passwordHash(email.trim());return e!=null&&hash!=null&&BCrypt.checkpw(password,hash)?e:null;}}

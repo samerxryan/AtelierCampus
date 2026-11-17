@@ -1,6 +1,5 @@
 package com.ateliercampus.web;
 
-import com.ateliercampus.data.DataStore;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
@@ -15,16 +14,14 @@ public class AppContextListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-        DataStore dataStore = DataStore.getInstance();
-        sce.getServletContext().setAttribute("dataStore", dataStore);
-        sce.getServletContext().log("AtelierCampus initialisé avec succès : " + 
-                dataStore.getAteliers().size() + " ateliers et " + 
-                dataStore.getEtudiants().size() + " étudiants enregistrés en mémoire.");
+        try { com.ateliercampus.dao.Database.initialize(getClass().getClassLoader());
+            sce.getServletContext().log("AtelierCampus JDBC initialisé : " + com.ateliercampus.dao.Database.getUrl());
+        } catch (Exception e) { throw new IllegalStateException("Initialisation de la base AtelierCampus impossible.", e); }
     }
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        sce.getServletContext().removeAttribute("dataStore");
+        sce.getServletContext().log("AtelierCampus arrêté.");
     }
 }
 

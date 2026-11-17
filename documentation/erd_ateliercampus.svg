@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="820" viewBox="0 0 1800 820">
+<rect width="100%" height="100%" fill="white"/>
+<text x="70" y="85" font-family="Segoe UI, sans-serif" font-size="34" font-weight="700" fill="#10243A">Modèle relationnel AtelierCampus</text>
+<rect x="70" y="160" width="445" height="405" rx="18" fill="#F2F7FB" stroke="#10243A" stroke-width="4"/>
+<path d="M88 160 H497 Q515 160 515 178 V220 H70 V178 Q70 160 88 160Z" fill="#10243A"/>
+<text x="90" y="200" font-family="Segoe UI, sans-serif" font-size="28" font-weight="700" fill="white">ETUDIANT</text>
+<text x="90" y="268" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">PK  id BIGINT</text>
+<text x="90" y="319" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">nom VARCHAR(100) NOT NULL</text>
+<text x="90" y="370" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">UK  email VARCHAR(120)</text>
+<text x="90" y="421" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">mot_de_passe VARCHAR(60)</text>
+<text x="90" y="472" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">role CHECK ETUDIANT | GESTIONNAIRE</text>
+<rect x="680" y="160" width="440" height="405" rx="18" fill="#F2F7FB" stroke="#10243A" stroke-width="4"/>
+<path d="M698 160 H1102 Q1120 160 1120 178 V220 H680 V178 Q680 160 698 160Z" fill="#10243A"/>
+<text x="700" y="200" font-family="Segoe UI, sans-serif" font-size="28" font-weight="700" fill="white">INSCRIPTION</text>
+<text x="700" y="268" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">PK  id BIGINT</text>
+<text x="700" y="319" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">FK  etudiant_id → Etudiant</text>
+<text x="700" y="370" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">FK  atelier_id → Atelier</text>
+<text x="700" y="421" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">date_inscription TIMESTAMP</text>
+<text x="700" y="472" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">statut CHECK CONFIRMEE | ANNULEE</text>
+<text x="700" y="523" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">UK  (etudiant_id, atelier_id)</text>
+<rect x="1285" y="160" width="445" height="405" rx="18" fill="#F2F7FB" stroke="#10243A" stroke-width="4"/>
+<path d="M1303 160 H1712 Q1730 160 1730 178 V220 H1285 V178 Q1285 160 1303 160Z" fill="#10243A"/>
+<text x="1305" y="200" font-family="Segoe UI, sans-serif" font-size="28" font-weight="700" fill="white">ATELIER</text>
+<text x="1305" y="268" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">PK  id BIGINT</text>
+<text x="1305" y="319" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">titre VARCHAR(180) NOT NULL</text>
+<text x="1305" y="370" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">description VARCHAR(4000)</text>
+<text x="1305" y="421" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">date_heure TIMESTAMP NOT NULL</text>
+<text x="1305" y="472" font-family="Segoe UI, sans-serif" font-size="21" fill="#24384B">capacite CHECK &gt; 0</text>
+<path d="M515 360 H680 M1120 360 H1285" stroke="#1677C8" stroke-width="5" fill="none"/>
+<path d="M515 342 V378 M662 347 L680 360 L662 373 M1138 347 L1120 360 L1138 373 M1285 342 V378" stroke="#1677C8" stroke-width="4" fill="none"/>
+<text x="555" y="318" font-family="Segoe UI" font-size="23" fill="#10243A">1</text><text x="635" y="318" font-family="Segoe UI" font-size="23" fill="#10243A">0..N</text>
+<text x="1158" y="318" font-family="Segoe UI" font-size="23" fill="#10243A">0..N</text><text x="1240" y="318" font-family="Segoe UI" font-size="23" fill="#10243A">1</text>
+<text x="70" y="660" font-family="Segoe UI" font-size="23" fill="#24384B">Contraintes : clés étrangères · unicité étudiant/atelier · suppression atelier refusée si confirmations existantes.</text>
+<text x="70" y="710" font-family="Segoe UI" font-size="20" fill="#53687A">Légende : PK clé primaire · FK clé étrangère · UK contrainte UNIQUE.</text>
+</svg>

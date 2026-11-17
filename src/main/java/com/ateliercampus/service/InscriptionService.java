@@ -1,0 +1,2 @@
+package com.ateliercampus.service;import com.ateliercampus.dao.InscriptionDao;import java.util.*;
+public class InscriptionService {private final InscriptionDao dao=new InscriptionDao();public void inscrire(long etu,long atelier)throws Exception{dao.inscrire(etu,atelier);}public void annuler(long etu,long inscription)throws Exception{dao.annuler(etu,inscription);}public List<Map<String,Object>> pourEtudiant(long id)throws Exception{return dao.pourEtudiant(id);}public List<Map<String,Object>> participants(long atelier)throws Exception{return dao.participants(atelier);}}
