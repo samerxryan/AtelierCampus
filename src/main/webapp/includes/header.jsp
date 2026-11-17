@@ -2,9 +2,6 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
-<c:if test="${empty applicationScope.dataStore}">
-    <c:set var="dataStore" value="<%= com.ateliercampus.data.DataStore.getInstance() %>" scope="application" />
-</c:if>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -41,7 +38,7 @@
         </div>
 
         <div class="header-main">
-            <a href="${pageContext.request.contextPath}/index.jsp" class="brand-wrapper" title="AtelierCampus — Accueil">
+            <a href="${pageContext.request.contextPath}/catalogue" class="brand-wrapper" title="AtelierCampus — Accueil">
                 <div class="brand-crest">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -55,14 +52,14 @@
             </a>
 
             <nav class="site-nav" aria-label="Navigation principale">
-                <a href="${pageContext.request.contextPath}/index.jsp" class="nav-item ${param.activeNav == 'home' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/catalogue" class="nav-item ${param.activeNav == 'home' ? 'active' : ''}">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                         <polyline points="9 22 9 12 15 12 15 22"/>
                     </svg>
                     Accueil
                 </a>
-                <a href="${pageContext.request.contextPath}/catalogue.jsp" class="nav-item ${param.activeNav == 'catalogue' ? 'active' : ''}">
+                <a href="${pageContext.request.contextPath}/catalogue" class="nav-item ${param.activeNav == 'catalogue' ? 'active' : ''}">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect width="7" height="7" x="3" y="3" rx="1"/>
                         <rect width="7" height="7" x="14" y="3" rx="1"/>
@@ -74,15 +71,23 @@
             </nav>
 
             <div class="header-action">
-                <a href="${pageContext.request.contextPath}/catalogue.jsp" class="btn-header-cta">
+                <a href="${pageContext.request.contextPath}/connexion" class="btn-header-cta">
                     <span>S'inscrire à un atelier</span>
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M5 12h14"/>
                         <path d="m12 5 7 7-7 7"/>
                     </svg>
                 </a>
+                <c:if test="${not empty sessionScope.utilisateur}">
+                    <a href="${pageContext.request.contextPath}${sessionScope.role eq 'GESTIONNAIRE' ? '/gestion/ateliers' : '/mes-inscriptions'}" class="btn-header-cta">Mon espace</a>
+                    <form method="post" action="${pageContext.request.contextPath}/deconnexion" style="display:inline">
+                        <input type="hidden" name="csrf" value="${requestScope.csrf}">
+                        <button class="btn-header-cta" type="submit">Déconnexion</button>
+                    </form>
+                </c:if>
             </div>
         </div>
     </header>
 
     <main class="main-wrapper">
+

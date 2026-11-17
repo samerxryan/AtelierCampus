@@ -9,7 +9,7 @@
     <description>Gestion sécurisée des inscriptions aux ateliers de cybersécurité - Université Centrale</description>
 
     <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>catalogue</welcome-file>
     </welcome-file-list>
 
     <!-- Configuration de sécurité de la session -->
@@ -23,6 +23,18 @@
     </session-config>
 
     <!-- Gestion contrôlée des erreurs HTTP et exceptions sans exposition de stack traces -->
+    <error-page>
+        <error-code>400</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>403</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>409</error-code>
+        <location>/error.jsp</location>
+    </error-page>
     <error-page>
         <error-code>404</error-code>
         <location>/error.jsp</location>

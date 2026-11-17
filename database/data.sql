@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS Initialisation_Donnees (cle INTEGER PRIMARY KEY CHECK (cle=1));
+INSERT INTO Atelier(titre,description,date_heure,capacite) SELECT 'Sécurité Web et OWASP Top 10','Vulnérabilités Web, XSS, CSRF et méthodes de protection.','2026-11-20 14:00:00',25 WHERE NOT EXISTS (SELECT 1 FROM Initialisation_Donnees WHERE cle=1);
+INSERT INTO Atelier(titre,description,date_heure,capacite) SELECT 'Analyse Forensique et Réponse à Incident','Acquisition de preuves numériques et investigation post-attaque.','2026-11-27 09:30:00',20 WHERE NOT EXISTS (SELECT 1 FROM Initialisation_Donnees WHERE cle=1);
+INSERT INTO Atelier(titre,description,date_heure,capacite) SELECT 'Cryptographie Appliquée et Blockchain','Primitives cryptographiques, TLS et gestion des clés.','2026-12-04 15:00:00',3 WHERE NOT EXISTS (SELECT 1 FROM Initialisation_Donnees WHERE cle=1);
+INSERT INTO Atelier(titre,description,date_heure,capacite) SELECT 'Audit de Sécurité Réseau et Pentesting','Reconnaissance réseau et tests d’intrusion contrôlés.','2026-10-15 10:00:00',15 WHERE NOT EXISTS (SELECT 1 FROM Initialisation_Donnees WHERE cle=1);
+INSERT INTO Initialisation_Donnees(cle) SELECT 1 WHERE NOT EXISTS (SELECT 1 FROM Initialisation_Donnees WHERE cle=1);

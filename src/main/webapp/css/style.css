@@ -1522,3 +1522,49 @@ h1, h2, h3, h4, h5, h6 {
         grid-template-columns: 1fr;
     }
 }
+/* Formulaires MVC Partie 2 */
+.content-container form label {
+    display: grid;
+    grid-template-columns: minmax(8rem, 12rem) minmax(12rem, 1fr);
+    align-items: center;
+    gap: .75rem;
+    margin: .9rem 0;
+}
+.content-container form input:not([type="hidden"]),
+.content-container form textarea {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 38rem;
+    padding: .7rem .8rem;
+    border: 1px solid #cbd5e1;
+    border-radius: .45rem;
+    font: inherit;
+}
+.content-container form textarea { min-height: 7rem; }
+.content-container form button { margin: .5rem 0; }
+@media (max-width: 600px) {
+    .content-container form label { grid-template-columns: 1fr; gap: .35rem; }
+}
+/* Formulaires MVC de Partie 2 */
+.content-container form label {
+    display: grid;
+    grid-template-columns: minmax(8rem, 12rem) minmax(12rem, 1fr);
+    align-items: center;
+    gap: .75rem;
+    margin: .9rem 0;
+}
+.content-container form input:not([type="hidden"]),
+.content-container form textarea {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 38rem;
+    padding: .7rem .8rem;
+    border: 1px solid #cbd5e1;
+    border-radius: .45rem;
+    font: inherit;
+}
+.content-container form textarea { min-height: 7rem; }
+.content-container form button { margin: .5rem 0; }
+@media (max-width: 600px) {
+    .content-container form label { grid-template-columns: 1fr; gap: .35rem; }
+}

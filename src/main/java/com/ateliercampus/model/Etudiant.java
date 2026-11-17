@@ -13,6 +13,7 @@ public class Etudiant implements Serializable {
     private Long id;
     private String nom;
     private String email;
+    private String role;
 
     public Etudiant() {
     }
@@ -46,6 +47,8 @@ public class Etudiant implements Serializable {
     public void setEmail(String email) {
         this.email = email;
     }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
 
     @Override
     public boolean equals(Object o) {

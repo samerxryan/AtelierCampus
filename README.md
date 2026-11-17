@@ -1,83 +1,96 @@
-# AtelierCampus — Portail Officiel des Ateliers de Cybersécurité
+# AtelierCampus — Partie 2
 
-**Université Centrale** — Pôle Ingénierie & Technologies de l'Information  
-**Centre de Formation Pratique en Cybersécurité**
+Application de gestion des inscriptions aux ateliers de cybersécurité de l’Université Centrale. Cette version remplace la simulation JSP de Partie 1 par une application MVC Servlets/JSP, une persistance JDBC relationnelle, l’authentification et le contrôle des règles métier.
 
----
+## Technologies
 
-## 1. Présentation de la Plateforme
+- Java 17, Maven 3.9+
+- Apache Tomcat 10.1.x (Jakarta Servlet 6.0, JSP 3.1)
+- H2 2.3 en mode fichier, JDBC, JSTL 3.0
+- jBCrypt 0.4 (BCrypt, coût 12)
+- JUnit 5.10, Mockito 5, AssertJ (tests hérités de Partie 1)
 
-**AtelierCampus** est le portail web officiel de l'Université Centrale dédié à la diffusion du catalogue et à la gestion des demandes d'inscription aux ateliers techniques spécialisés en cybersécurité (Sécurité Web & OWASP, Analyse Forensique, Cryptographie Appliquée et Pentesting Réseau).
+## Prérequis
 
-Conçue selon les standards d'ergonomie et de sécurité des portails universitaires modernes, l'application propose :
-- Une navigation fluide et intuitive entre l'accueil, le catalogue et les fiches pédagogiques.
-- Un affichage temps réel de l'état des sessions (disponibilité, sessions complètes ou clôturées).
-- Un formulaire de demande sécurisé avec contrôle strict côté serveur et protection anti-XSS intégrée.
-- Une confirmation de demande claire informant le candidat de la prise en compte de sa simulation.
+JDK 17 et accès à Maven (ou au Maven Wrapper fourni). Tomcat 10.1 est requis pour exécuter le WAR. Aucun serveur SQL externe n’est nécessaire. Le projet a été compilé et déployé en local sous Windows 11 avec OpenJDK 17.0.21 et Tomcat 10.1.61.
 
----
+## Architecture
 
-## 2. Identité Visuelle & Ergonomie
+```text
+src/main/java/com/ateliercampus/
+  model/       Atelier, Etudiant, Inscription
+  dao/         Database, AtelierDao, EtudiantDao, InscriptionDao
+  service/     AtelierService, InscriptionService, AuthentificationService
+  controller/ AtelierCampusServlet (contrôleur HTTP)
+  web/         AppContextListener, SecuriteFilter
+src/main/webapp/WEB-INF/vues/   JSP de présentation JSTL/EL
+ database/                      schema.sql, data.sql
+ documentation/                 analyse, plan, résultats, captures
+ rapport/                       rapport DOCX/PDF
+```
 
-L'interface a été entièrement conçue pour refléter le sérieux, la rigueur et la crédibilité institutionnelle de l'Université Centrale :
-- **Palette sobre et élégante :** Deep Navy (`#10243A`), Accent Universitaire Bleu (`#1677C8`), Cyan (`#20B8CF`), surfaces épurées (`#FFFFFF`) sur fond neutre (`#F5F7FA`).
-- **Iconographie 100% SVG (Lucide) :** Remplacement total des emojis par des icônes vectorielles institutionnelles, précises et cohérentes.
-- **Typographie professionnelle :** Combinaison des polices *Plus Jakarta Sans* (titres et identité) et *Inter* (lisibilité du contenu et des formulaires).
-- **Design Responsive :** Adaptation naturelle sur ordinateurs de bureau, tablettes et terminaux mobiles.
+Les vues sont servies sous `/catalogue`, `/atelier?id=…`, `/connexion`, `/mes-inscriptions` et `/gestion/*`. Les accès SQL passent par les DAO. La couche service valide les dates, les capacités et les statuts.
 
----
+## Installation de la base
 
-## 3. Architecture Technique
+Au premier déploiement, le listener exécute `database/schema.sql` puis `database/data.sql`. La base H2 est créée automatiquement sous `${user.home}/.ateliercampus/ateliercampus`. Les données d’atelier existantes ne sont pas remplacées lors d’un redémarrage. Les identifiants sont générés par H2.
 
-- **Java JDK :** OpenJDK 17 LTS (Microsoft Build)
-- **Conteneur Servlet :** Apache Tomcat 10.1.x (Jakarta EE 10)
-- **Gestionnaire de dépendances :** Apache Maven 3.9+
-- **Composants Web :** Jakarta Servlet 6.0, Jakarta Server Pages (JSP) 3.1, JSTL 3.0 (GlassFish Runtime)
-- **Tests Automatisés :** JUnit 5.10, AssertJ 3.25, Mockito 5.11 (24 tests passés avec succès)
+Les variables suivantes permettent de remplacer la connexion H2 par défaut :
 
----
+```powershell
+$env:ATELIERCAMPUS_JDBC_URL = 'jdbc:h2:file:C:/chemin/ateliercampus'
+$env:ATELIERCAMPUS_DB_USER = 'sa'
+$env:ATELIERCAMPUS_DB_PASSWORD = ''
+```
 
-## 4. Données de Référence en Mémoire (`DataStore.java`)
+Le fichier [database.example.properties](config/database.example.properties) illustre ces paramètres sans secret réel. Les scripts sont également fournis à la racine `database/`.
 
-### A. Étudiants Référencés
-1. **Ahmed Ben Ali** — `ahmed@gmail.com`
-2. **Mohamed Trabelsi** — `mohamed@gmail.com`
-3. **Sami Mansour** — `sami@gmail.com`
-4. **Youssef Amri** — `youssef@gmail.com`
-5. **Karim Saidi** — `karim@gmail.com`
+## Compilation et déploiement
 
-### B. Ateliers Programmés
-1. **Réf. #1 — Sécurité Web & OWASP Top 10** (*Places disponibles*) — 20 novembre 2026 à 14h00
-2. **Réf. #2 — Analyse Forensique et Réponse à Incident** (*Places disponibles*) — 27 novembre 2026 à 09h30
-3. **Réf. #3 — Cryptographie Appliquée et Blockchain** (*Complet*) — 4 décembre 2026 à 15h00
-4. **Réf. #4 — Audit de Sécurité Réseau & Pentesting** (*Session terminée*) — 15 octobre 2026 à 10h00
-
----
-
-## 5. Instructions de Construction & Déploiement
-
-### Compilation et Tests
 ```powershell
 .\mvnw.cmd clean package
 ```
-Le livrable généré est : `target/AtelierCampus.war`.
 
-### Déploiement sur Tomcat 10.1
-1. Copier `target/AtelierCampus.war` dans le répertoire `webapps/` de Tomcat 10.1.
-2. Démarrer Tomcat via `bin/catalina.bat start`.
-3. Accéder à l'application : [http://localhost:8080/AtelierCampus/](http://localhost:8080/AtelierCampus/)
+Copier `target/AtelierCampus.war` dans `TOMCAT_HOME/webapps/`, démarrer Tomcat (`bin/catalina.bat start`) et ouvrir `http://localhost:8080/AtelierCampus/catalogue`.
 
----
+Pour exécuter les tests unitaires existants :
 
-## 6. Vérification des Scénarios de Test
+```powershell
+.\mvnw.cmd test
+```
 
-Tous les contrôles fonctionnels et sécuritaires ont été exécutés et validés :
+## Comptes de démonstration — développement uniquement
 
-| Scénario | Données | Résultat Observé | Statut |
-| :--- | :--- | :--- | :---: |
-| **Saisie valide** | Nom : `Ahmed Ben Ali`<br>Email : `ahmed@gmail.com`<br>Atelier : `1` | Récapitulatif affiché avec la mention requise : *« Demande simulée, non enregistrée. »* | **Succès (200)** |
-| **Email invalide** | Nom : `Ahmed Ben Ali`<br>Email : `invalid-email`<br>Atelier : `1` | Formulaire réaffiché avec bandeau d'alerte rouge, valeurs saisies conservées. | **Succès (200)** |
-| **Nom vide** | Nom : `""`<br>Email : `ahmed@gmail.com`<br>Atelier : `1` | Formulaire réaffiché avec message indiquant que le nom est obligatoire. | **Succès (200)** |
-| **Atelier inconnu** | Nom : `Test Student`<br>Email : `test@example.com`<br>Atelier : `9999` | Erreur contrôlée : message d'atelier inexistant affiché sans aucune exception technique 500. | **Succès (200)** |
-| **Tentative XSS** | Nom : `<script>alert('XSS')</script>`<br>Atelier : `1` | Script neutralisé et échappé en `&lt;script&gt;alert(&#x27;XSS&#x27;)&lt;/script&gt;`. Aucun popup exécuté. | **Succès (200)** |
-| **Parcours HTTP** | Accueil → Catalogue → Détail → Inscription → Récapitulatif | Préservation intégrale de l'ID atelier, protection des accès directs en GET. | **Succès (200)** |
+Ces comptes sont créés au premier démarrage et servent aux démonstrations locales. Ne pas les utiliser en production.
+
+- Étudiant : `ahmed@gmail.com` / `Etudiant2026!`
+- Gestionnaire : `gestionnaire@ateliercampus.local` / `Gestionnaire2026!`
+
+La base ne contient que les condensats BCrypt, jamais les mots de passe en clair.
+
+## Fonctionnalités
+
+**Visiteur :** catalogue public, recherche paramétrée par titre, détail, nombre de confirmations et places disponibles. Les ateliers complets et déjà commencés sont signalés.
+
+**Étudiant :** connexion, déconnexion, consultation de son historique, inscription avant le début, annulation avant le début et réactivation d’une inscription annulée. Un étudiant ne peut modifier que ses propres inscriptions.
+
+**Gestionnaire :** tableau de bord, création, modification, suppression si aucune inscription confirmée n’existe, consultation des participants et statuts. Les contrôles de rôle sont réalisés côté serveur.
+
+## Sécurité mise en œuvre
+
+BCrypt (coût 12), invalidation/renouvellement de session à la connexion, délai de session de 30 minutes, cookie HttpOnly/SameSite Strict, PreparedStatement, échappement JSTL `c:out`/`fn:escapeXml`, jeton CSRF aléatoire sur chaque POST, autorisation serveur par rôle et requête d’annulation filtrée par propriétaire. L’inscription verrouille l’atelier avec `SELECT … FOR UPDATE`, contrôle la capacité et enregistre dans une transaction.
+
+## Données de démonstration et limites
+
+Le catalogue comprend quatre ateliers (deux futurs disponibles, un futur complet, un déjà commencé), cinq étudiants, un gestionnaire et une inscription annulée. H2 fichier facilite une démonstration locale mono-instance. Pour un déploiement distribué, prévoir un serveur relationnel administré et une gestion de secrets appropriée. Le CRUD des ateliers est volontairement limité aux champs demandés dans Partie 2 ; les informations animateur/salle/niveau de Partie 1 ne sont pas encore persistées.
+
+## Documentation du dépôt
+
+- `documentation/ANALYSE_ARCHITECTURE_EXISTANTE.md` — constat avant mise à niveau.
+- `documentation/PLAN_IMPLEMENTATION_P2.md` — correspondance exigences et composants.
+- `documentation/RESULTATS_TESTS.md` — tests exécutés et limites.
+- `documentation/AUDIT_FINAL_PARTIE_2.md` — audit de cohérence, résultats rejoués et limites des preuves.
+- `documentation/erd_ateliercampus.svg` / `.png` — diagramme ERD basé sur le schéma SQL.
+- `documentation/captures/` — captures réelles de l’application locale.
+- `database/README.md` — choix, scripts et accès de développement.
+- `rapport/Rapport_Partie_2_AtelierCampus.docx` et `.pdf` — rapport académique.

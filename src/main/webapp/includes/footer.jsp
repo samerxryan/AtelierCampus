@@ -15,9 +15,9 @@
             <div class="footer-col-nav">
                 <div class="footer-heading-col">Navigation</div>
                 <ul class="footer-nav-links">
-                    <li><a href="${pageContext.request.contextPath}/index.jsp">Accueil</a></li>
-                    <li><a href="${pageContext.request.contextPath}/catalogue.jsp">Catalogue des ateliers</a></li>
-                    <li><a href="${pageContext.request.contextPath}/catalogue.jsp">Calendrier des sessions</a></li>
+                    <li><a href="${pageContext.request.contextPath}/catalogue">Accueil</a></li>
+                    <li><a href="${pageContext.request.contextPath}/catalogue">Catalogue des ateliers</a></li>
+                    <li><a href="${pageContext.request.contextPath}/catalogue">Calendrier des sessions</a></li>
                 </ul>
             </div>
 
@@ -58,12 +58,13 @@
             <div class="footer-bottom-wrap">
                 <p>&copy; 2026 Université Centrale • Département Génie Informatique &amp; Cybersécurité. Tous droits réservés.</p>
                 <div class="footer-legal-links">
-                    <a href="${pageContext.request.contextPath}/catalogue.jsp">Règlement des ateliers</a>
+                    <a href="${pageContext.request.contextPath}/catalogue">Règlement des ateliers</a>
                     <span>•</span>
-                    <a href="${pageContext.request.contextPath}/catalogue.jsp">Protection des données</a>
+                    <a href="${pageContext.request.contextPath}/catalogue">Protection des données</a>
                 </div>
             </div>
         </div>
     </footer>
 </body>
 </html>
+
